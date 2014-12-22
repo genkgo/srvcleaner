@@ -4,6 +4,7 @@ namespace Genkgo\Srvcleaner\Console;
 use Genkgo\Srvcleaner\Command\CleanCommand;
 use Genkgo\Srvcleaner\Srvcleaner;
 use Symfony\Component\Console\Application as BaseApplication;
+use Symfony\Component\Console\Command\Command;
 
 /**
  * Class Application
@@ -20,7 +21,7 @@ class Application extends BaseApplication
     }
 
     /**
-     * Initializes all the composer commands
+     * @return Command[]
      */
     protected function getDefaultCommands()
     {

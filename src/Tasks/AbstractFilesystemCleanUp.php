@@ -3,9 +3,9 @@ namespace Genkgo\Srvcleaner\Tasks;
 
 use DateTime;
 use DateInterval;
-use Iterator;
 use SplFileInfo;
 use DirectoryIterator;
+use CallbackFilterIterator;
 use Genkgo\Srvcleaner\Exceptions\ConfigurationException;
 use Genkgo\Srvcleaner\Util\ProcessAwareInterface;
 use Genkgo\Srvcleaner\Util\Processor;
@@ -23,6 +23,7 @@ abstract class AbstractFilesystemCleanUp extends AbstractTask implements Process
 
     /**
      * @param Processor $processor
+     * @return void
      */
     public function setProcessor(Processor $processor)
     {
@@ -57,6 +58,12 @@ abstract class AbstractFilesystemCleanUp extends AbstractTask implements Process
     }
 
     /**
+     * @param string $match
+     * @return CallbackFilterIterator
+     */
+    abstract protected function getList ($match);
+
+    /**
      * @param $path
      * @param array $matches
      * @param bool $recursive
@@ -75,19 +82,7 @@ abstract class AbstractFilesystemCleanUp extends AbstractTask implements Process
         }
 
         if ($recursive) {
-            $dir = new DirectoryIterator($path);
-            foreach ($dir as $file) {
-                if ($file->isDir() && !$file->isDot()) {
-                    $scheduleForRemoval = array_merge(
-                        $scheduleForRemoval,
-                        $this->getListForRemoval(
-                            $file->getPathname(),
-                            $matches,
-                            $recursive
-                        )
-                    );
-                }
-            }
+            $scheduleForRemoval = $this->getRecursiveListForRemoval($path, $matches, $recursive, $scheduleForRemoval);
         }
 
         return $scheduleForRemoval;
@@ -119,10 +114,28 @@ abstract class AbstractFilesystemCleanUp extends AbstractTask implements Process
         return true;
     }
 
-
     /**
-     * @param $match
-     * @return Iterator
+     * @param $path
+     * @param array $matches
+     * @param $recursive
+     * @param $scheduleForRemoval
+     * @return array
      */
-    abstract protected function getList ($match);
+    private function getRecursiveListForRemoval($path, array $matches, $recursive, $scheduleForRemoval)
+    {
+        $dir = new DirectoryIterator($path);
+        foreach ($dir as $file) {
+            if ($file->isDir() && !$file->isDot()) {
+                $scheduleForRemoval = array_merge(
+                    $scheduleForRemoval,
+                    $this->getListForRemoval(
+                        $file->getPathname(),
+                        $matches,
+                        $recursive
+                    )
+                );
+            }
+        }
+        return $scheduleForRemoval;
+    }
 }

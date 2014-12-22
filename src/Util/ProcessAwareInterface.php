@@ -9,6 +9,7 @@ interface ProcessAwareInterface
 {
     /**
      * @param Processor $processor
+     * @return void
      */
     public function setProcessor(Processor $processor);
 }
