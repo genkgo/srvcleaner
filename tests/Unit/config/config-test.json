@@ -1,0 +1,25 @@
+{
+  "name": "Test Cleaner",
+  "tasks": [{
+      "name" : "removeTmp1",
+      "src": "CleanUpDirectories",
+      "config": {
+        "path": "tmp*",
+        "createdAt": "P1D"
+      }
+    },{
+    "name" : "removeTmp2",
+    "src": "CleanUpDirectories",
+    "config": {
+      "path": "tmp*",
+      "createdAt": "P1D"
+    }
+  },{
+    "name" : "removeTmp3",
+    "src": "CleanUpDirectories",
+    "config": {
+      "path": "tmp*",
+      "createdAt": "P1D"
+    }
+  }]
+}

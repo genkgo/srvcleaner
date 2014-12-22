@@ -1,0 +1,11 @@
+{
+  "name": "Test Cleaner",
+  "tasks": [{
+      "name" : "removeTmp",
+      "src": "CleanUpDirectories",
+      "config": {
+        "path": "/tmp/srvcleaner*"
+      }
+    }
+  ]
+}

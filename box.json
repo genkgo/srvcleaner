@@ -1,0 +1,20 @@
+{
+  "chmod": "0755",
+  "directories": [
+    "src"
+  ],
+  "files-bin": [
+    "vendor/herrera-io/phar-update/res/schema.json"
+  ],
+  "finder": [
+    {
+      "name": "*.php",
+      "exclude": ["Tests","test","Test","tests"],
+      "in": "vendor"
+    }
+  ],
+  "git-version": "package_version",
+  "main": "bin/srvcleaner.php",
+  "output": "phar/srvcleaner.phar",
+  "stub": true
+}

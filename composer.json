@@ -1,0 +1,28 @@
+{
+  "name": "genkgo/srvcleaner",
+  "description": "CLI tool to clean up your server (e.g. remove files and directories that are overdue)",
+  "minimum-stability": "stable",
+  "license": "MIT License",
+  "authors": [
+    {
+      "name": "Frederik Bosch",
+      "email": "development@genkgo.nl"
+    }
+  ],
+  "require": {
+    "php": ">=5.3.3",
+    "symfony/console": "2.6.1",
+    "symfony/process": "2.6.1",
+    "kherge/box": "~2.4"
+  },
+  "require-dev" : {
+    "phpunit/phpunit" : "~4",
+    "phpunit/php-code-coverage" : "~2",
+    "phpunit/phpunit-mock-objects": "~2"
+  },
+  "autoload": {
+    "psr-4": {
+      "Genkgo\\Srvcleaner\\": ["src","tests"]
+    }
+  }
+}

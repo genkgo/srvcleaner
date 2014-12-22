@@ -1,3 +1,5 @@
+/.idea/
+/phar/
 composer.phar
 vendor/
 
