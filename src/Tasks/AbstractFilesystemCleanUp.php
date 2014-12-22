@@ -70,19 +70,10 @@ abstract class AbstractFilesystemCleanUp extends AbstractTask implements Process
      * @return SplFileInfo[]
      */
     private function getListForRemoval ($path, array $matches, $recursive = false) {
-        $scheduleForRemoval = [];
-
-        foreach ($matches as $match) {
-            $list = $this->getList($path . '/' . $match);
-            foreach ($list as $item) {
-                if ($this->filter($item)) {
-                    $scheduleForRemoval[] = $item;
-                }
-            }
-        }
+        $scheduleForRemoval = $this->calculateMatches($path, $matches);
 
         if ($recursive) {
-            $scheduleForRemoval = $this->getRecursiveListForRemoval($path, $matches, $recursive, $scheduleForRemoval);
+            $scheduleForRemoval += $this->getRecursiveListForRemoval($path, $matches, $recursive);
         }
 
         return $scheduleForRemoval;
@@ -121,8 +112,10 @@ abstract class AbstractFilesystemCleanUp extends AbstractTask implements Process
      * @param $scheduleForRemoval
      * @return array
      */
-    private function getRecursiveListForRemoval($path, array $matches, $recursive, $scheduleForRemoval)
+    private function getRecursiveListForRemoval($path, array $matches, $recursive)
     {
+        $scheduleForRemoval = [];
+
         $dir = new DirectoryIterator($path);
         foreach ($dir as $file) {
             if ($file->isDir() && !$file->isDot()) {
@@ -134,6 +127,26 @@ abstract class AbstractFilesystemCleanUp extends AbstractTask implements Process
                         $recursive
                     )
                 );
+            }
+        }
+        return $scheduleForRemoval;
+    }
+
+    /**
+     * @param $path
+     * @param array $matches
+     * @return array
+     */
+    private function calculateMatches($path, array $matches)
+    {
+        $scheduleForRemoval = [];
+
+        foreach ($matches as $match) {
+            $list = $this->getList($path . '/' . $match);
+            foreach ($list as $item) {
+                if ($this->filter($item)) {
+                    $scheduleForRemoval[] = $item;
+                }
             }
         }
         return $scheduleForRemoval;
