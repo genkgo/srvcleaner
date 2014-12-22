@@ -3,8 +3,7 @@
   "tasks": [{
     "name" : "removeTmp1",
     "config": {
-      "path": "tmp*",
-      "createdAt": "P1D"
+      "path": "tmp*"
     }
   }]
 }

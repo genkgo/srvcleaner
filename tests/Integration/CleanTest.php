@@ -62,7 +62,7 @@ class CleanTest extends AbstractTestCase
 
         $filter = new \stdClass();
         $filter->path = '/tmp/srvcleaner*';
-        $filter->createdAt = 'P1D';
+        $filter->modifiedAt = 'P1D';
 
         $tasks->each(function (TaskInterface $task) use ($processor1, $filter) {
             $task->setConfig($filter);

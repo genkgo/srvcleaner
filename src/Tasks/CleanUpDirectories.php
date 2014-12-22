@@ -60,7 +60,7 @@ class CleanUpDirectories extends AbstractTask implements ProcessAwareInterface
     private function filter(SplFileInfo $item)
     {
         $intervalBased = [
-            'createdAt' => 'ATime',
+            'accessAt' => 'ATime',
             'modifiedAt' => 'MTime'
         ];
         foreach ($intervalBased as $property => $getter) {

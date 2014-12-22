@@ -4,8 +4,7 @@
     "name" : "",
     "src": "",
     "config": {
-      "path": "tmp*",
-      "createdAt": "P1D"
+      "path": "tmp*"
     }
   }]
 }

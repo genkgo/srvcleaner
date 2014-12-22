@@ -4,22 +4,19 @@
       "name" : "removeTmp1",
       "src": "CleanUpDirectories",
       "config": {
-        "path": "tmp*",
-        "createdAt": "P1D"
+        "path": "tmp*"
       }
     },{
     "name" : "removeTmp2",
     "src": "CleanUpDirectories",
     "config": {
-      "path": "tmp*",
-      "createdAt": "P1D"
+      "path": "tmp*"
     }
   },{
     "name" : "removeTmp3",
     "src": "CleanUpDirectories",
     "config": {
-      "path": "tmp*",
-      "createdAt": "P1D"
+      "path": "tmp*"
     }
   }]
 }

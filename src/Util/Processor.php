@@ -40,6 +40,7 @@ class Processor
         chdir($this->currentWorkingDirectory);
         $process = new Process($command);
         $process->enableOutput();
+        $process->run();
         if (!$process->isSuccessful()) {
             chdir($cwd);
             throw new ProcessException($process->getErrorOutput());
