@@ -34,7 +34,7 @@ vendor/bin/box build -c box.json
 
 ### Create a config file
 
-The config contains your cleanup tasks
+The config containing your cleanup tasks. Remove directories (including contents) or remove files.
 
 ```php
 {
@@ -45,6 +45,12 @@ The config contains your cleanup tasks
       "config": {
         "path": "/tmp/srvcleaner*"
       }
+    },{
+      "name" : "removeTmp",
+      "src": "CleanUpFiles",
+      "config": {
+        "path": "/tmp/*.tmp"
+      }
     }
   ]
 }
@@ -53,7 +59,7 @@ The config contains your cleanup tasks
 ### Run the command
 
 ```
-phar/srvcleaner.phar -c srvcleaner.json
+phar/srvcleaner.phar clean -c srvcleaner.json
 ```
 
 ## Contributing
