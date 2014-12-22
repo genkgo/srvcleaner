@@ -7,7 +7,7 @@ use Genkgo\Srvcleaner\TaskInterface;
 use Genkgo\Srvcleaner\Util\ProcessAwareInterface;
 use Genkgo\Srvcleaner\Util\Processor;
 
-class CleanTest extends AbstractTestCase
+class CleanDirectoriesTest extends AbstractTestCase
 {
     private $tmpDir;
 
@@ -20,7 +20,7 @@ class CleanTest extends AbstractTestCase
 
     public function testRemoveDirectories()
     {
-        $config = Config::fromFile(__DIR__ .'/config/config-test.json');
+        $config = Config::fromFile(__DIR__ .'/config/config-clean-directories.json');
         $tasks = $config->getTasks();
 
         $this->assertCount(1, $tasks);
@@ -51,7 +51,7 @@ class CleanTest extends AbstractTestCase
 
     public function testRemoveDirectoriesWithModifiedTimeFilter()
     {
-        $config = Config::fromFile(__DIR__ .'/config/config-test.json');
+        $config = Config::fromFile(__DIR__ .'/config/config-clean-directories.json');
         $tasks = $config->getTasks();
 
         $processor1 = $this->getMock(Processor::class);
