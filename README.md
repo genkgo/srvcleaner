@@ -56,6 +56,24 @@ The config containing your cleanup tasks. Remove directories (including contents
 }
 ```
 
+If you are removing backups that are overdue, use the following settings to remove backups older than 30 days.
+
+```php
+{
+  "name": "Test Cleaner",
+  "tasks": [{
+      "name" : "removeTmp",
+      "src": "CleanUpFiles",
+      "config": {
+        "path": "/tmp/*.tar.gz",
+        "modifiedAt": "P30D"
+      }
+    }
+  ]
+}
+```
+
+
 ### Run the command
 
 ```
