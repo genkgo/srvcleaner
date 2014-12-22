@@ -51,7 +51,7 @@ The config containing your cleanup tasks. Remove directories (including contents
       "src": "CleanUpFiles",
       "config": {
         "path": "/tmp",
-        "*.tmp"
+        "match": "*.tmp"
       }
     }
   ]
