@@ -67,7 +67,8 @@ If you are removing backups that are overdue, use the following settings to remo
       "name" : "removeTmp",
       "src": "CleanUpFiles",
       "config": {
-        "path": "/tmp/*.tar.gz",
+        "path": "/tmp",
+        "match": "*.tar.gz",
         "modifiedAt": "P30D"
       }
     }
