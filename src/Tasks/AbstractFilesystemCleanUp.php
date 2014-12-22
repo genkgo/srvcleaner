@@ -2,11 +2,13 @@
 namespace Genkgo\Srvcleaner\Tasks;
 
 use DateTime;
+use DateInterval;
+use Iterator;
 use SplFileInfo;
+use DirectoryIterator;
 use Genkgo\Srvcleaner\Exceptions\ConfigurationException;
 use Genkgo\Srvcleaner\Util\ProcessAwareInterface;
 use Genkgo\Srvcleaner\Util\Processor;
-use Traversable;
 
 /**
  * Class CleanUpDirectoriesTask
@@ -34,22 +36,61 @@ abstract class AbstractFilesystemCleanUp extends AbstractTask implements Process
     {
         $this->processor->setCurrentWorkingDirectory($this->getCurrentWorkingDirectory());
 
-        $scheduleForDeletions = [];
-        if (!isset($this->getConfig()->path)) {
-            throw new ConfigurationException('The config `path` is required to cleanup directories');
+        if (!isset($this->getConfig()->path) || !isset($this->getConfig()->match)) {
+            throw new ConfigurationException('Config `path` and `match` are required to cleanup directories');
         }
 
-        $list = $this->getList();
-        foreach ($list as $item) {
-            if ($this->filter($item)) {
-                $scheduleForDeletions[] = $item;
+        $path = $this->getConfig()->path;
+        $match = $this->getConfig()->match;
+        if (isset($this->getConfig()->recursive) && $this->getConfig()->recursive === true) {
+            $recursive = true;
+        } else {
+            $recursive = false;
+        }
+
+        $shouldBeRemoved = $this->getListForRemoval($path, $match, $recursive);
+        foreach ($shouldBeRemoved as $item) {
+            if (file_exists($item->getPathname())) {
+                $this->processor->execute("rm -Rf {$item->getPathname()}");
+            }
+        }
+    }
+
+    /**
+     * @param $path
+     * @param array $matches
+     * @param bool $recursive
+     * @return SplFileInfo[]
+     */
+    private function getListForRemoval ($path, array $matches, $recursive = false) {
+        $scheduleForRemoval = [];
+
+        foreach ($matches as $match) {
+            $list = $this->getList($path . '/' . $match);
+            foreach ($list as $item) {
+                if ($this->filter($item)) {
+                    $scheduleForRemoval[] = $item;
+                }
             }
         }
 
-        foreach ($scheduleForDeletions as $item) {
-            /* @var $item SplFileInfo */
-            $this->processor->execute("rm -Rf {$item->getPathname()}");
+        if ($recursive) {
+            $dir = new DirectoryIterator($path);
+            foreach ($dir as $file) {
+                if ($file->isDir() && !$file->isDot()) {
+                    $scheduleForRemoval = array_merge(
+                        $scheduleForRemoval,
+                        $this->getListForRemoval(
+                            $file->getPathname(),
+                            $matches,
+                            $recursive
+                        )
+                    );
+                }
+            }
         }
+
+        return $scheduleForRemoval;
     }
 
     /**
@@ -66,7 +107,7 @@ abstract class AbstractFilesystemCleanUp extends AbstractTask implements Process
             if (isset($this->getConfig()->{$property})) {
                 $configValue = $this->getConfig()->{$property};
                 $compareDate = new DateTime('now');
-                $compareDate->sub(new \DateInterval($configValue));
+                $compareDate->sub(new DateInterval($configValue));
                 $timeCleanup = $compareDate->format('U');
 
                 $time = call_user_func([$item, 'get' . $getter]);
@@ -80,7 +121,8 @@ abstract class AbstractFilesystemCleanUp extends AbstractTask implements Process
 
 
     /**
-     * @return Traversable
+     * @param $match
+     * @return Iterator
      */
-    abstract protected function getList ();
+    abstract protected function getList ($match);
 }

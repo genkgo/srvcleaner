@@ -9,9 +9,12 @@ use CallbackFilterIterator;
  */
 class CleanUpFiles extends AbstractFilesystemCleanUp
 {
-    protected function getList () {
-        $path = $this->getConfig()->path;
-        $glob = new \GlobIterator($path);
+    /**
+     * @param $match
+     * @return CallbackFilterIterator
+     */
+    protected function getList ($match) {
+        $glob = new \GlobIterator($match);
         $filter = function (\SplFileInfo $item) {
             return $item->isFile();
         };

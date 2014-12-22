@@ -5,7 +5,8 @@
       "src": "CleanUpFiles",
       "config": {
         "path": "/tmp",
-        "match": ["srvcleaner*"]
+        "match": ["*.srvclean"],
+        "recursive": true
       }
     }
   ]

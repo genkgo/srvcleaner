@@ -3,8 +3,6 @@
   "tasks": [{
     "name" : "",
     "src": "",
-    "config": {
-      "path": "tmp*"
-    }
+    "config": {}
   }]
 }

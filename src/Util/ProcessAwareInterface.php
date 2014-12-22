@@ -9,7 +9,6 @@ interface ProcessAwareInterface
 {
     /**
      * @param Processor $processor
-     * @return mixed
      */
     public function setProcessor(Processor $processor);
 }

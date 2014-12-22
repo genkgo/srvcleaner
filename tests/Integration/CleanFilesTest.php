@@ -37,7 +37,8 @@ class CleanFilesTest extends AbstractTestCase
         $tasks->each(function (TaskInterface $task, $name) use ($processor) {
             $this->assertEquals('removeTmp', $name);
             $this->assertInstanceOf(ProcessAwareInterface::class, $task);
-            $this->assertEquals('/tmp/srvcleaner*', $task->getConfig()->path);
+            $this->assertEquals('/tmp', $task->getConfig()->path);
+            $this->assertContains('srvcleaner*', $task->getConfig()->match);
 
             $task->setCurrentWorkingDirectory(dirname(__DIR__));
 
@@ -61,7 +62,8 @@ class CleanFilesTest extends AbstractTestCase
         $processor1->expects($this->never())->method('execute');
 
         $filter = new \stdClass();
-        $filter->path = '/tmp/srvcleaner*';
+        $filter->path = '/tmp';
+        $filter->match = ['srvcleaner*'];
         $filter->modifiedAt = 'P1D';
 
         $tasks->each(function (TaskInterface $task) use ($processor1, $filter) {
@@ -93,6 +95,41 @@ class CleanFilesTest extends AbstractTestCase
 
             $task->execute();
         });
+    }
+
+    public function testRecursive()
+    {
+        $config = Config::fromFile(__DIR__ .'/config/config-clean-files-recur.json');
+        $tasks = $config->getTasks();
+
+        $tmpDir = dirname($this->tmpFile);
+
+        $processor = $this->getMock(Processor::class);
+        $processor->expects($this->once())->method('setCurrentWorkingDirectory')->with(
+            $this->equalTo(dirname(__DIR__))
+        );
+        $processor->expects($this->once())->method('execute')->with(
+            $this->equalTo("rm -Rf {$tmpDir}/recur/recur.srvclean")
+        );
+
+        mkdir ($tmpDir.'/recur');
+        touch ($tmpDir.'/recur/recur.srvclean');
+
+        $tasks->each(function (TaskInterface $task, $name) use ($processor) {
+            $this->assertEquals('removeTmp', $name);
+            $this->assertInstanceOf(ProcessAwareInterface::class, $task);
+
+            $task->setCurrentWorkingDirectory(dirname(__DIR__));
+
+            if ($task instanceof ProcessAwareInterface) {
+                $task->setProcessor($processor);
+            }
+
+            $task->execute();
+        });
+
+        unlink($tmpDir.'/recur/recur.srvclean');
+        rmdir ($tmpDir.'/recur');
     }
 
     protected function tearDown()
