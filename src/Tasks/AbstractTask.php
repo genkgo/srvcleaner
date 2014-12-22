@@ -16,12 +16,12 @@ abstract class AbstractTask implements TaskInterface
     private $currentWorkingDirectory;
 
     /**
-     * @var
+     * @var stdClass
      */
     private $config;
 
     /**
-     * @return mixed
+     * @return stdClass
      */
     public function getConfig()
     {
@@ -29,7 +29,7 @@ abstract class AbstractTask implements TaskInterface
     }
 
     /**
-     * @param mixed $config
+     * @param stdClass $config
      */
     public function setConfig(stdClass $config)
     {
@@ -37,7 +37,7 @@ abstract class AbstractTask implements TaskInterface
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getCurrentWorkingDirectory()
     {
@@ -45,7 +45,7 @@ abstract class AbstractTask implements TaskInterface
     }
 
     /**
-     * @param mixed $currentWorkingDirectory
+     * @param string $currentWorkingDirectory
      */
     public function setCurrentWorkingDirectory($currentWorkingDirectory)
     {

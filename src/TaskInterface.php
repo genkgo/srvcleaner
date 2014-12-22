@@ -10,12 +10,14 @@ use stdClass;
 interface TaskInterface
 {
     /**
-     * @param $directory
+     * @param string $directory
+     * @return void
      */
     public function setCurrentWorkingDirectory($directory);
 
     /**
      * @param stdClass $config
+     * @return void
      */
     public function setConfig(stdClass $config);
 

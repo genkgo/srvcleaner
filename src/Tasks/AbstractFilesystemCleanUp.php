@@ -108,8 +108,7 @@ abstract class AbstractFilesystemCleanUp extends AbstractTask implements Process
     /**
      * @param $path
      * @param array $matches
-     * @param $recursive
-     * @param $scheduleForRemoval
+     * @param boolean $recursive
      * @return array
      */
     private function getRecursiveListForRemoval($path, array $matches, $recursive)

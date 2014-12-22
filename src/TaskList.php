@@ -27,7 +27,7 @@ class TaskList implements Countable, IteratorAggregate
     }
 
     /**
-     * @param callable $callback
+     * @param Closure $callback
      */
     public function each(Closure $callback)
     {
