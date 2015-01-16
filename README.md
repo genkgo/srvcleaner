@@ -51,7 +51,7 @@ The config containing your cleanup tasks. Remove directories (including contents
       "src": "CleanUpFiles",
       "config": {
         "path": "/tmp",
-        "match": "*.tmp"
+        "match": ["*.tmp"]
       }
     }
   ]
@@ -68,7 +68,7 @@ If you are removing backups that are overdue, use the following settings to remo
       "src": "CleanUpFiles",
       "config": {
         "path": "/tmp",
-        "match": "*.tar.gz",
+        "match": ["*.tar.gz"],
         "modifiedAt": "P30D"
       }
     }
