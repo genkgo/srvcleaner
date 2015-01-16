@@ -44,7 +44,7 @@ The config containing your cleanup tasks. Remove directories (including contents
       "src": "CleanUpDirectories",
       "config": {
         "path": "/tmp",
-        "match": "srvcleaner*"
+        "match": ["srvcleaner*"]
       }
     },{
       "name" : "removeTmp",
