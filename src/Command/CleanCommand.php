@@ -27,7 +27,7 @@ class CleanCommand extends AbstractCommand
             ->setName('clean')
             ->setDescription('Clean up your server')
             ->addOption('config', '-c', InputOption::VALUE_REQUIRED, 'Configuration file')
-            ->addOption('dry-run', '-c', InputOption::VALUE_NONE, 'Do nothing, show what is to be cleaned');
+            ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Do nothing, show what is to be cleaned');
     }
 
     /**
