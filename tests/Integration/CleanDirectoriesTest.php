@@ -6,13 +6,19 @@ use Genkgo\Srvcleaner\Config;
 use Genkgo\Srvcleaner\TaskInterface;
 use Genkgo\Srvcleaner\Util\ProcessAwareInterface;
 use Genkgo\Srvcleaner\Util\Processor;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
+use RuntimeException;
 
 class CleanDirectoriesTest extends AbstractTestCase
 {
     private $tmpDir;
+    private $logger;
 
     protected function setUp()
     {
+        $this->logger = new NullLogger();
         $this->tmpDir = sys_get_temp_dir().'/srvcleaner'.uniqid();
         mkdir($this->tmpDir);
     }
@@ -46,6 +52,10 @@ class CleanDirectoriesTest extends AbstractTestCase
                 $task->setProcessor($processor);
             }
 
+            if ($task instanceof LoggerAwareInterface) {
+                $task->setLogger($this->logger);
+            }
+
             $task->execute();
         });
     }
@@ -74,6 +84,10 @@ class CleanDirectoriesTest extends AbstractTestCase
                 $task->setProcessor($processor1);
             }
 
+            if ($task instanceof LoggerAwareInterface) {
+                $task->setLogger($this->logger);
+            }
+
             $task->execute();
         });
 
@@ -91,6 +105,10 @@ class CleanDirectoriesTest extends AbstractTestCase
 
             if ($task instanceof ProcessAwareInterface) {
                 $task->setProcessor($processor2);
+            }
+
+            if ($task instanceof LoggerAwareInterface) {
+                $task->setLogger($this->logger);
             }
 
             $task->execute();
@@ -122,10 +140,78 @@ class CleanDirectoriesTest extends AbstractTestCase
                 $task->setProcessor($processor);
             }
 
+            if ($task instanceof LoggerAwareInterface) {
+                $task->setLogger($this->logger);
+            }
+
             $task->execute();
         });
 
         rmdir($this->tmpDir.'/recur');
+    }
+
+    public function testDryRun()
+    {
+        $config = Config::fromFile(__DIR__ .'/config/config-clean-directories.json');
+        $tasks = $config->getTasks();
+
+        $processor = $this->getMock(Processor::class);
+        $processor->expects($this->never())->method('execute');
+
+        $tasks->each(function (TaskInterface $task) use ($processor) {
+            $task->setCurrentWorkingDirectory(dirname(__DIR__));
+            if ($task instanceof ProcessAwareInterface) {
+                $task->setProcessor($processor);
+            }
+            if ($task instanceof LoggerAwareInterface) {
+                $task->setLogger($this->logger);
+            }
+            $task->execute(true);
+        });
+    }
+
+    public function testLogger()
+    {
+        $config = Config::fromFile(__DIR__ .'/config/config-clean-directories.json');
+        $tasks = $config->getTasks();
+
+        $processor = $this->getMock(Processor::class);
+
+        $logger = $this->getMock(LoggerInterface::class);
+        $logger->expects($this->once())->method('info');
+
+        $tasks->each(function (TaskInterface $task) use ($processor, $logger) {
+            $task->setCurrentWorkingDirectory(dirname(__DIR__));
+
+            if ($task instanceof ProcessAwareInterface) {
+                $task->setProcessor($processor);
+            }
+
+            if ($task instanceof LoggerAwareInterface) {
+                $task->setLogger($logger);
+            }
+
+            $task->execute();
+        });
+    }
+
+    public function testNoLogger()
+    {
+        $this->setExpectedException(RuntimeException::class);
+        $config = Config::fromFile(__DIR__ .'/config/config-clean-directories.json');
+        $tasks = $config->getTasks();
+
+        $processor = $this->getMock(Processor::class);
+
+        $tasks->each(function (TaskInterface $task) use ($processor) {
+            $task->setCurrentWorkingDirectory(dirname(__DIR__));
+
+            if ($task instanceof ProcessAwareInterface) {
+                $task->setProcessor($processor);
+            }
+
+            $task->execute();
+        });
     }
 
     protected function tearDown()

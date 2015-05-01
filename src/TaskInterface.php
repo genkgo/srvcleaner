@@ -27,6 +27,8 @@ interface TaskInterface
     public function getConfig();
 
     /**
+     * @param bool $dryRun
+     * @return void
      */
-    public function execute();
+    public function execute($dryRun = false);
 }

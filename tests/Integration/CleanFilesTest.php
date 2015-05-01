@@ -6,13 +6,17 @@ use Genkgo\Srvcleaner\Config;
 use Genkgo\Srvcleaner\TaskInterface;
 use Genkgo\Srvcleaner\Util\ProcessAwareInterface;
 use Genkgo\Srvcleaner\Util\Processor;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\NullLogger;
 
 class CleanFilesTest extends AbstractTestCase
 {
     private $tmpFile;
+    private $logger;
 
     protected function setUp()
     {
+        $this->logger = new NullLogger();
         $this->tmpFile = sys_get_temp_dir().'/srvcleaner'.uniqid();
         touch($this->tmpFile);
     }
@@ -46,6 +50,10 @@ class CleanFilesTest extends AbstractTestCase
                 $task->setProcessor($processor);
             }
 
+            if ($task instanceof LoggerAwareInterface) {
+                $task->setLogger($this->logger);
+            }
+
             $task->execute();
         });
     }
@@ -74,6 +82,10 @@ class CleanFilesTest extends AbstractTestCase
                 $task->setProcessor($processor1);
             }
 
+            if ($task instanceof LoggerAwareInterface) {
+                $task->setLogger($this->logger);
+            }
+
             $task->execute();
         });
 
@@ -91,6 +103,10 @@ class CleanFilesTest extends AbstractTestCase
 
             if ($task instanceof ProcessAwareInterface) {
                 $task->setProcessor($processor2);
+            }
+
+            if ($task instanceof LoggerAwareInterface) {
+                $task->setLogger($this->logger);
             }
 
             $task->execute();
@@ -112,7 +128,9 @@ class CleanFilesTest extends AbstractTestCase
             $this->equalTo("rm -Rf {$tmpDir}/recur/recur.srvclean")
         );
 
-        mkdir ($tmpDir.'/recur');
+        if (!file_exists($tmpDir.'/recur')) {
+            mkdir ($tmpDir.'/recur');
+        }
         touch ($tmpDir.'/recur/recur.srvclean');
 
         $tasks->each(function (TaskInterface $task, $name) use ($processor) {
@@ -123,6 +141,10 @@ class CleanFilesTest extends AbstractTestCase
 
             if ($task instanceof ProcessAwareInterface) {
                 $task->setProcessor($processor);
+            }
+
+            if ($task instanceof LoggerAwareInterface) {
+                $task->setLogger($this->logger);
             }
 
             $task->execute();

@@ -3,6 +3,8 @@ namespace Genkgo\Srvcleaner\Tasks;
 
 use DateTime;
 use DateInterval;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 use SplFileInfo;
 use DirectoryIterator;
 use CallbackFilterIterator;
@@ -14,12 +16,16 @@ use Genkgo\Srvcleaner\Util\Processor;
  * Class CleanUpDirectoriesTask
  * @package Genkgo\Srvcleaner\Tasks
  */
-abstract class AbstractFilesystemCleanUp extends AbstractTask implements ProcessAwareInterface
+abstract class AbstractFilesystemCleanUp extends AbstractTask implements ProcessAwareInterface, LoggerAwareInterface
 {
     /**
      * @var Processor
      */
     private $processor;
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
     /**
      * @param Processor $processor
@@ -31,10 +37,22 @@ abstract class AbstractFilesystemCleanUp extends AbstractTask implements Process
     }
 
     /**
-     *
+     * @param LoggerInterface $logger
+     * @return void
      */
-    public function execute()
+    public function setLogger (LoggerInterface $logger) {
+        $this->logger = $logger;
+    }
+
+    /**
+     * @param bool $dryRun
+     */
+    public function execute($dryRun = false)
     {
+        if ($this->logger === null) {
+            throw new \RuntimeException('No logger defined');
+        }
+
         $this->processor->setCurrentWorkingDirectory($this->getCurrentWorkingDirectory());
 
         if (!isset($this->getConfig()->path) || !isset($this->getConfig()->match)) {
@@ -52,7 +70,12 @@ abstract class AbstractFilesystemCleanUp extends AbstractTask implements Process
         $shouldBeRemoved = $this->getListForRemoval($path, $match, $recursive);
         foreach ($shouldBeRemoved as $item) {
             if (file_exists($item->getPathname())) {
-                $this->processor->execute("rm -Rf {$item->getPathname()}");
+                $date = date('Y-m-d H:i:s', $item->getMTime());
+                $this->logger->info("[Removing] {$item->getPathname()} (Modified At: {$date})");
+
+                if (!$dryRun) {
+                    $this->processor->execute("rm -Rf {$item->getPathname()}");
+                }
             }
         }
     }

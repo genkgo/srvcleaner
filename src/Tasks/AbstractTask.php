@@ -53,6 +53,8 @@ abstract class AbstractTask implements TaskInterface
     }
 
     /**
+     * @param bool $dryRun
+     * @return void
      */
-    abstract public function execute();
+    abstract public function execute($dryRun = false);
 }
