@@ -2,7 +2,7 @@
   "name": "genkgo/srvcleaner",
   "description": "CLI tool to clean up your server (e.g. remove files and directories that are overdue)",
   "minimum-stability": "stable",
-  "license": "MIT License",
+  "license": "MIT",
   "authors": [
     {
       "name": "Frederik Bosch",
